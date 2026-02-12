@@ -6,11 +6,18 @@ DATABASE = "./database.db"
 app = Flask(__name__)
 
 class MainPageItem:
-    def __init__(self, planeName: str, UUID: int, imgLink: str, manufacturerName: str):
+    def __init__(self, planeName: str, UUID: int, imgLink: str, manufacturerName: str, manufacturerUUID: int):
         self.planeName = planeName
         self.UUID = UUID
         self.imgLink = imgLink
         self.manufacturerName = manufacturerName
+        self.manufacturerUUID = manufacturerUUID
+
+    def __repr__(self):
+        return f"MainPageItem data for '{self.planeName}'"
+
+    def from_tuple(args):
+        return MainPageItem(*args)
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -30,16 +37,11 @@ def query_db(query, args=(), one=False):
     cur.close()
     return (rv[0] if rv else None) if one else rv
 
-@app.route("/")
-def home():
-    sql = "SELECT PRODUCTS.NAME,PRODUCTS.UUID,PRODUCTS.PHOTOLINK,MANUFACTURER.NAME FROM PRODUCTS JOIN MANUFACTURER ON PRODUCTS.MANUFACTURERUUID=MANUFACTURER.UUID"
-    results = query_db(sql)
-    return str(results)
-
 @app.route("/main_page")
 def main_page():
-    sql = "SELECT PRODUCTS.NAME,PRODUCTS.UUID,PRODUCTS.PHOTOLINK,MANUFACTURER.NAME FROM PRODUCTS JOIN MANUFACTURER ON PRODUCTS.MANUFACTURERUUID=MANUFACTURER.UUID"
+    sql = "SELECT PRODUCTS.NAME,PRODUCTS.UUID,PRODUCTS.PHOTOLINK,MANUFACTURER.NAME,PRODUCTS.MANUFACTURERUUID FROM PRODUCTS JOIN MANUFACTURER ON PRODUCTS.MANUFACTURERUUID=MANUFACTURER.UUID"
     results = query_db(sql)
+    results = list(map(MainPageItem.from_tuple, results))
     return render_template("main_page.html", results=results)
 
 @app.route("/plane/<int:uuid>")
@@ -47,6 +49,10 @@ def plane(uuid):
     sql = f"SELECT PRODUCTS.*,MANUFACTURER.NAME FROM PRODUCTS JOIN MANUFACTURER ON PRODUCTS.MANUFACTURERUUID=MANUFACTURER.UUID WHERE PRODUCTS.UUID={uuid}"
     result = query_db(sql, (), True)
     return str(result)
+
+@app.route("/manufacturer/<int:uuid>")
+def manufacturer(uuid):
+    pass
 
 
 
