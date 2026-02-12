@@ -1,9 +1,16 @@
-from flask import Flask, g
+from flask import Flask, g, render_template
 import sqlite3
 
 DATABASE = "./database.db"
 
 app = Flask(__name__)
+
+class MainPageItem:
+    def __init__(self, planeName: str, UUID: int, imgLink: str, manufacturerName: str):
+        self.planeName = planeName
+        self.UUID = UUID
+        self.imgLink = imgLink
+        self.manufacturerName = manufacturerName
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -28,6 +35,12 @@ def home():
     sql = "SELECT PRODUCTS.NAME,PRODUCTS.UUID,PRODUCTS.PHOTOLINK,MANUFACTURER.NAME FROM PRODUCTS JOIN MANUFACTURER ON PRODUCTS.MANUFACTURERUUID=MANUFACTURER.UUID"
     results = query_db(sql)
     return str(results)
+
+@app.route("/main_page")
+def main_page():
+    sql = "SELECT PRODUCTS.NAME,PRODUCTS.UUID,PRODUCTS.PHOTOLINK,MANUFACTURER.NAME FROM PRODUCTS JOIN MANUFACTURER ON PRODUCTS.MANUFACTURERUUID=MANUFACTURER.UUID"
+    results = query_db(sql)
+    return render_template("main_page.html", results=results)
 
 @app.route("/plane/<int:uuid>")
 def plane(uuid):
