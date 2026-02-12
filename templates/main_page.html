@@ -1,15 +1,53 @@
 {% extends "layout.html" %}
 {% block body %}
-<p>test main page</p>
-{% for itemInfo in results %}
-  <div>
-    <a href="/plane/{{ itemInfo.UUID }}">
-        <h4>{{ itemInfo.planeName }}</h6>
-    </a>
-    <a href="/manufacturer/{{ itemInfo.manufacturerUUID }}" >
-        <p>{{ itemInfo.manufacturerName }}</p>
-        </a>
-    <img src="{{ itemInfo.imgLink }}">
-  </div>
-{% endfor %}
+<style>
+    #page-header {
+        margin-left: 1em;
+    }
+
+    .info-box {
+        border-radius: 1em;
+        background-color: lightgray;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        padding-bottom: 1em;
+    }
+
+    .info-box-text {
+        display: flex;
+        flex: 1;
+        justify-content: space-between;
+    }
+
+    #info-box-parent {
+        width: 100vw;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .plane-name {
+        padding-left: 1em;
+    }
+
+    .manufacturer-name {
+        padding-right: 1em;
+    }
+</style>
+<h1 id="page-header">All Planes</h1>
+<div id="info-box-parent" >
+    {% for itemInfo in results %}
+        <div class="info-box" >
+            <div class="info-box-text">
+                <a href="/plane/{{ itemInfo.UUID }}">
+                    <h2 class="plane-name">{{ itemInfo.planeName }}</h6>
+                </a>
+                <a href="/manufacturer/{{ itemInfo.manufacturerUUID }}">
+                    <p class="manufacturer-name">{{ itemInfo.manufacturerName }}</p>
+                </a>
+            </div>
+            <img src="{{ itemInfo.imgLink }}">
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}
