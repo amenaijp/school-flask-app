@@ -13,11 +13,18 @@ class MainPageItem:
         self.manufacturerName = manufacturerName
         self.manufacturerUUID = manufacturerUUID
 
-    def __repr__(self):
-        return f"MainPageItem data for '{self.planeName}'"
-
     def from_tuple(args):
         return MainPageItem(*args)
+
+class SpecificPlaneItem:
+    def __init__(self, planeName: str, description: str, creationYear: str, planeUUID: int, manufacturerUUID: int, imgLink: str, manufacturerName: str):
+        self.planeName = planeName
+        self.description = description
+        self.creationYear = creationYear
+        self.planeUUID = planeUUID
+        self.manufacturerUUID = manufacturerUUID
+        self.imgLink = imgLink
+        self.manufacturerName = manufacturerName
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -48,7 +55,8 @@ def main_page():
 def plane(uuid):
     sql = f"SELECT PRODUCTS.*,MANUFACTURER.NAME FROM PRODUCTS JOIN MANUFACTURER ON PRODUCTS.MANUFACTURERUUID=MANUFACTURER.UUID WHERE PRODUCTS.UUID={uuid}"
     result = query_db(sql, (), True)
-    return str(result)
+    result = SpecificPlaneItem(*result)
+    return render_template("aircraft.html", result=result)
 
 @app.route("/manufacturer/<int:uuid>")
 def manufacturer(uuid):

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block body %}
+<style>
+    #header-layout {
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #plane-name {
+        margin-left: 1em;
+    }
+
+    #date-manufacturer {
+        margin-right: 1em;
+    }
+
+    #plane-description {
+        margin-left: 3em;
+    }
+
+    #plane-img {
+        border-radius: 1em;
+    }
+
+    #plane-img-box {
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+</style>
+<div id="description" >
+    <div id="header-layout">
+        <h1 id="plane-name">{{ result.planeName }}</h1>
+        <p id="date-manufacturer" >Created in {{ result.creationYear }} by <a href="/manufacturer/{{ result.manufacturerUUID }}">{{ result.manufacturerName }}</a></p>
+    </div>
+    <p id="plane-description">{{ result.description }}</p>
+    <div id="plane-img-box" >
+        <img id="plane-img" src="{{ result.imgLink }}">    
+    </div>
+</div>
+{% endblock %}
