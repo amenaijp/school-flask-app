@@ -8,38 +8,88 @@
         justify-content: space-between;
     }
 
-    #plane-name {
+    .header {
         margin-left: 1em;
     }
 
-    #date-manufacturer {
+    #date {
         margin-right: 1em;
     }
 
-    #plane-description {
+    #manufacturer-description {
         margin-left: 3em;
     }
 
-    #plane-img {
+    #logo-img {
         border-radius: 1em;
     }
 
-    #plane-img-box {
+    #logo-img-box {
         display: flex;
         flex: 1;
         flex-direction: row;
         justify-content: center;
     }
 
+    #product-box {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
+
+    .info-box {
+        border-radius: 1em;
+        background-color: lightgray;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        padding-bottom: 1em;
+    }
+
+    .info-box-text {
+        display: flex;
+        flex: 1;
+        justify-content: space-between;
+    }
+
+    #info-box-parent {
+        width: 100vw;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .plane-name {
+        padding-left: 1em;
+    }
+
+    .manufacturer-name {
+        padding-right: 1em;
+    }
 </style>
 <div id="description" >
     <div id="header-layout">
-        <h1 id="plane-name">{{ result.planeName }}</h1>
-        <p id="date-manufacturer" >Created in {{ result.creationYear }} by <a href="/manufacturer/{{ result.manufacturerUUID }}">{{ result.manufacturerName }}</a></p>
+        <h1 class="header">{{ result.manufacturerName }}</h1>
+        <p id="date" >Founded in {{ result.foundingYear }}</p>
     </div>
-    <p id="plane-description">{{ result.description }}</p>
-    <div id="plane-img-box" >
-        <img id="plane-img" src="{{ result.imgLink }}">    
+    <p id="manufacturer-description">{{ result.description }}</p>
+    <div id="logo-img-box" >
+        <img id="logo-img" src="{{ result.logoLink }}">    
+    </div>
+    <div id="product-box">
+        <h2 class="header">Products</h2>
+        <div id="info-box-parent" >
+            {% for itemInfo in result.planes %}
+                <div class="info-box" >
+                    <div class="info-box-text">
+                        <a href="/plane/{{ itemInfo.UUID }}">
+                            <h2 class="plane-name">{{ itemInfo.planeName }}</h6>
+                        </a>
+                        <p class="manufacturer-name">{{ itemInfo.manufacturerName }}</p>
+                    </div>
+                    <img src="{{ itemInfo.imgLink }}">
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

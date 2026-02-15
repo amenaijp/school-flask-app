@@ -1,5 +1,6 @@
 from flask import Flask, g, render_template
 import sqlite3
+from typing import List
 
 DATABASE = "./database.db"
 
@@ -25,6 +26,14 @@ class SpecificPlaneItem:
         self.manufacturerUUID = manufacturerUUID
         self.imgLink = imgLink
         self.manufacturerName = manufacturerName
+
+class SpecificManufacturer:
+    def __init__(self, manufacturerName: str, description: str, foundingYear: int, _uuid: int, logoLink: str, planes: List[SpecificPlaneItem]):
+        self.manufacturerName = manufacturerName
+        self.description = description
+        self.foundingYear = foundingYear
+        self.logoLink = logoLink
+        self.planes = planes
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -60,7 +69,12 @@ def plane(uuid):
 
 @app.route("/manufacturer/<int:uuid>")
 def manufacturer(uuid):
-    pass
+    sql = f"SELECT * FROM MANUFACTURER WHERE MANUFACTURER.UUID={uuid}"
+    result_manufacturer = query_db(sql, (), True)
+    sql = f"SELECT PRODUCTS.NAME,PRODUCTS.UUID,PRODUCTS.PHOTOLINK,MANUFACTURER.NAME,PRODUCTS.MANUFACTURERUUID FROM PRODUCTS JOIN MANUFACTURER ON PRODUCTS.MANUFACTURERUUID=MANUFACTURER.UUID WHERE PRODUCTS.MANUFACTURERUUID={uuid}"
+    result_planes = list(map(MainPageItem.from_tuple, query_db(sql)))
+    result = SpecificManufacturer(*result_manufacturer, result_planes)
+    return render_template("manufacturer.html", result=result)
 
 
 
